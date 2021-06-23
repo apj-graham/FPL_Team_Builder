@@ -8,8 +8,6 @@ from pprint import pprint
 
 from matplotlib import pyplot as plt
 
-#TODO Ensure max 3 players from one team
-
 PlayerStats = namedtuple('PlayerStats', ['name', 'position', 'cost', 'injured', 'team'])
 
 def main():
@@ -41,20 +39,26 @@ def get_fpl_data():
 def create_team(data, budget=1000, star_player_limit=3, gkp=2, df=5, mid=5, fwd=3):
     """Populate a team with star_player_limit top point scoring players and best value players
     Value is taken as total_point/now_cost"""
+    teams = set(data['team'].values)
+    teams_count = {team: 0 for team in teams}
+
     fpl_team = []
     positions = {'Goalkeeper': gkp, 'Defender': df,
                  'Midfielder': mid, 'Forward': fwd}
     for player in top_players_by('total_points', data):
-        if budget >= player.cost and positions[player.position] > 0 and star_player_limit > 0 and player.injured != 0:
+        if budget >= player.cost and positions[player.position] > 0 and star_player_limit > 0 and player.injured != 0 and teams_count[player.team] <= 3:
             fpl_team.append(player)
             budget -= player.cost
             positions[player.position] -= 1
             star_player_limit -= 1
+            teams_count[player.team] += 1
     for player in top_players_by('value', data):
         if player not in fpl_team and budget >= player.cost and player.injured != 0 and positions[player.position] > 0:
             fpl_team.append(player)
             budget -= player.cost
             positions[player.position] -= 1
+            teams_count[player.team] += 1
+
     return fpl_team
 
 def top_players_by(measure, data):
