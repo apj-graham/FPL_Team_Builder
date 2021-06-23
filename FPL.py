@@ -18,6 +18,8 @@ def main():
     pprint(team)
 
 def get_fpl_data():
+    """Get player data for this season from the fpl API. Convert some fields to appropriate types"""
+
     url = 'https://fantasy.premierleague.com/api/bootstrap-static/'
     res = requests.get(url)
     json = res.json()
@@ -37,23 +39,27 @@ def get_fpl_data():
     return elements_df
 
 def create_team(data, budget=1000, star_player_limit=3, gkp=2, df=5, mid=5, fwd=3):
-    team = []
+    """Populate a team with star_player_limit top point scoring players and best value players
+    Value is taken as total_point/now_cost"""
+    fpl_team = []
     positions = {'Goalkeeper': gkp, 'Defender': df,
                  'Midfielder': mid, 'Forward': fwd}
     for player in top_players_by('total_points', data):
         if budget >= player.cost and positions[player.position] > 0 and star_player_limit > 0 and player.injured != 0:
-            team.append(player)
+            fpl_team.append(player)
             budget -= player.cost
             positions[player.position] -= 1
             star_player_limit -= 1
     for player in top_players_by('value', data):
-        if player not in team and budget >= player.cost and player.injured != 0 and positions[player.position] > 0:
-            team.append(player)
+        if player not in fpl_team and budget >= player.cost and player.injured != 0 and positions[player.position] > 0:
+            fpl_team.append(player)
             budget -= player.cost
             positions[player.position] -= 1
-    return team
+    return fpl_team
 
 def top_players_by(measure, data):
+    """Return players from dataframe in descending order of 'measure'"""
+
     count = 0
     data = data.sort_values(measure, ascending=False)
     while count <= data.shape[1]: # Does not exceed number of rows in df
