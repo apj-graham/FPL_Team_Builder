@@ -9,8 +9,9 @@ PlayerStats = namedtuple('PlayerStats', ['name', 'position', 'cost', 'injured', 
 
 def main():
     data = get_fpl_data()
-    team = create_team(data)
-    pprint(team)
+    squad = create_team(data)
+    print(squad)
+    print(squad.cost)
 
 def get_fpl_data():
     """Get player data for this season from the fpl API. Convert some fields to appropriate types"""
@@ -36,6 +37,7 @@ def create_team(data, budget=1000, star_player_limit=3):
     """Populate a team with star_player_limit top point scoring players and best value players
     Value is taken as total_point/now_cost"""
     teams = set(data['team'].values)
+    print(teams)
     squad = Squad(teams, budget)
 
     for player in top_players_by('total_points', data):

@@ -28,8 +28,8 @@ class Squad(object):
 
     @property
     def cost(self):
-        """Total cost of the squad"""
-        return sum([player.price for player in self._squad])
+        """Total cost of the squad in units of 1m"""
+        return sum([player.cost for player in self._squad])/10.0
 
 
     @property
@@ -55,7 +55,8 @@ class Squad(object):
         4) There are less than 3 players from their team already in squad
         5) There is enough room in the budget for them
 
-        If these are all satisfied, then the player is eligible
+        If these are all satisfied, then the player is eligible. It is on the user
+        to call this method before adding a player.
         """
         if player.injured != 0:
             if player not in self._squad:
