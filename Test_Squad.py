@@ -1,20 +1,12 @@
+from constants import FPL_Constants
 import unittest
 from Squad import Squad, PlayerStats
 
-class TestSquad(unittest.TestCase):
+class TestSquad(unittest.TestCase, FPL_Constants):
 
     # Example teams that are part of the premier league
     TEAMS = ['Wolves', 'Brentford', 'Crystal Palace', 'Burnley', 'Newcastle', 'Watford', 'Norwich', 'Spurs', 'West Ham', 'Leicester',
              'Liverpool', 'Leeds', 'Southampton', 'Arsenal', 'Everton', 'Chelsea', 'Brighton', 'Aston Villa', 'Man City', 'Man Utd']
-
-    DEFAULT_BUDGET = 1000
-
-    GKP_LIMIT = 2
-    DEF_LIMIT = 5
-    MID_LIMIT = 5
-    FOR_LIMIT = 3
-
-    POSITIONS = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward']
 
     # Cost, injured status and team chosen to be compatible with a blank team
     VALID_GKP = PlayerStats('Name', 'Goalkeeper', 40, 1, TEAMS[0])
@@ -23,7 +15,24 @@ class TestSquad(unittest.TestCase):
     # Injured player
     INJURED_PLAYER = PlayerStats('Name', 'Goalkeeper', 0, 0, TEAMS[0])
 
-    #TODO add test for add_players. Move all constants to a seperate file
+    def test_add_player(self):
+        expected_squad = [self.VALID_GKP]
+        expected_budget = self.DEFAULT_BUDGET - self.VALID_GKP.cost
+
+        expected_positions = self.POSITION_LIMITS
+        expected_positions[self.VALID_GKP.position] -= 1
+
+        expected_team_counts = {team: 0 for team in self.TEAMS}
+        expected_team_counts[self.VALID_GKP.team] = 1
+
+        squad = Squad(self.TEAMS)
+        squad.add_player(self.VALID_GKP)
+
+        self.assertEqual(squad._squad, expected_squad)
+        self.assertEqual(squad.budget, expected_budget)
+        self.assertEqual(squad.positions, expected_positions)
+        self.assertEqual(squad.team_counts, expected_team_counts)
+
 
     def test_players_property(self):
         """squad.players returns a tuple containing the names of added players"""
@@ -86,7 +95,7 @@ class TestSquad(unittest.TestCase):
     def test_assessing_player_max_team_limit(self):
         """A player is considered ineligible if there are no more slots for their team"""
         squad = Squad(self.TEAMS)
-        squad.team_counts[self.VALID_GKP.team] = 3
+        squad.team_counts[self.VALID_GKP.team] = self.TEAM_LIMIT
         is_eligible = squad.is_player_eligible(self.VALID_GKP)
         self.assertFalse(is_eligible)
 

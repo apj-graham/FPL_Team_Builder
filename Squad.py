@@ -1,8 +1,10 @@
 from collections import namedtuple
+from constants import FPL_Constants
+import copy
 
 PlayerStats = namedtuple('PlayerStats', ['name', 'position', 'cost', 'injured', 'team'])
 
-class Squad(object):
+class Squad(FPL_Constants):
     """Class to encompass all info about the constructed FPL squad including
     players and total cost"""
 
@@ -13,16 +15,11 @@ class Squad(object):
         # The starting budget is 100m or 1000 0.1m units
         self.budget = budget
 
-        # Limits on number of players in team of each position
-        # These are taken from the FPL website
         self.positions = {'Goalkeeper': 2, 'Defender': 5,
-                         'Midfielder': 5, 'Forward': 3}
+                          'Midfielder': 5, 'Forward': 3}
 
-        # Tally of number of players from each team
-        # The chosen team cannot have more than 3 players from the same team
         self.team_counts = {team: 0 for team in teams}
 
-        # List used to store squad members
         self._squad = []
 
 
@@ -58,10 +55,10 @@ class Squad(object):
         If these are all satisfied, then the player is eligible. It is on the user
         to call this method before adding a player.
         """
-        if player.injured != 0:
+        if player.injured != self.INJURED_PLAYING_CHANCE:
             if player not in self._squad:
                 if self.positions[player.position] > 0:
-                    if self.team_counts[player.team] < 3:
+                    if self.team_counts[player.team] < self.TEAM_LIMIT:
                         if player.cost <= self.budget:
                             return True
         return False
