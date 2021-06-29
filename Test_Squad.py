@@ -23,6 +23,7 @@ class TestSquad(unittest.TestCase):
     # Injured player
     INJURED_PLAYER = PlayerStats('Name', 'Goalkeeper', 0, 0, TEAMS[0])
 
+    #TODO add test for add_players. Move all constants to a seperate file
 
     def test_players_property(self):
         """squad.players returns a tuple containing the names of added players"""
