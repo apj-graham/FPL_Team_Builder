@@ -33,10 +33,18 @@ def get_fpl_data():
 
     return elements_df
 
+<<<<<<< HEAD
 def create_team(data, budget=1000, star_player_limit=2):
     """Populate a team with star_player_limit top point scoring players and best value players
     Value is taken as total_point/now_cost"""
     teams = set(data['team'].values)
+=======
+def create_team(data, budget=1000, star_player_limit=3):
+    """Populate a team with star_player_limit top point scoring players and best value players
+    Value is taken as total_point/now_cost"""
+    teams = set(data['team'].values)
+    print(teams)
+>>>>>>> 83dfac6aa392c1c87e491fc0ef81949f0d5227b0
     squad = Squad(teams, budget)
 
     for player in top_players_by('total_points', data):

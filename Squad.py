@@ -1,8 +1,9 @@
 from collections import namedtuple
+import copy
 
 PlayerStats = namedtuple('PlayerStats', ['name', 'position', 'cost', 'injured', 'team'])
 
-class Squad(object):
+class Squad():
     """Class to encompass all info about the constructed FPL squad including
     players and total cost"""
 
