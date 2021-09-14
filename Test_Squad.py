@@ -16,6 +16,29 @@ class TestSquad(unittest.TestCase):
 
     POSITIONS = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward']
 
+    TEAM_LIMIT = 3
+
+    def test_add_player_to_squad(self):
+        """ Adding a player to a squad to should:
+        1) Add ther PlayerStats tuple to the squad
+        2) Deduct cost of player from budget
+        3) Update squad position limits
+        4) Update squad team counts
+        """
+        valid_player= PlayerStats('Name', 'Goalkeeper', 500, 1, self.TEAMS[0])
+        squad = Squad(self.TEAMS)
+        squad.add_player(valid_player)
+
+        exp_squad = [valid_player]
+        exp_squad_cost = (1000 - valid_player.cost) / 10 # Cost returned in units of 1 mil
+        exp_squad_position_limit = self.GKP_LIMIT - 1
+        exp_squad_team_limit = 1
+
+        self.assertEqual(squad._squad, exp_squad)
+        self.assertEqual(squad.cost, exp_squad_cost)
+        self.assertEqual(squad.positions[valid_player.position], exp_squad_position_limit)
+        self.assertEqual(squad.team_counts[valid_player.team], exp_squad_team_limit)
+
     def test_assessing_valid_player(self):
         """A player who is not injured, not too expensive, belongs to a valid team and has a valid position
         is considered eligible"""
@@ -70,7 +93,7 @@ class TestSquad(unittest.TestCase):
         # reached first
         valid_player= PlayerStats('Name', 'Midfielder', 0, 1, self.TEAMS[0])
         squad = Squad(self.TEAMS)
-        for _ in range(3):
+        for _ in range(self.TEAM_LIMIT):
             squad.add_player(valid_player)
 
         is_eligible = squad.is_player_eligible(valid_player)

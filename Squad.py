@@ -60,7 +60,7 @@ class Squad():
         to call this method before adding a player.
         """
         if player.injured != 0:
-            if player not in self._squad:
+            if player.name not in self.players:
                 if self.positions[player.position] > 0:
                     if self.team_counts[player.team] < 3:
                         if player.cost <= self.budget:
